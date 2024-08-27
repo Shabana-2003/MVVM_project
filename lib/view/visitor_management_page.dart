@@ -9,7 +9,8 @@ class VisitorManagementPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Visitor Management'),
+        backgroundColor: Colors.black,
+        title: Text('Visitor Management',style: TextStyle(color: Colors.white),),
       ),
       body: Column(
         children: [
@@ -26,7 +27,8 @@ class VisitorManagementPage extends StatelessWidget {
                         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         child: ListTile(
                           leading: CircleAvatar(
-                            child: Text(visitor['name'][0]),
+                            backgroundColor: Colors.black,
+                            child: Text(visitor['name'][8],style: TextStyle(color: Colors.white),),
                           ),
                           title: Text(visitor['name']),
                           subtitle: Column(
@@ -71,10 +73,11 @@ class VisitorManagementPage extends StatelessWidget {
               onPressed: () {
                 userViewModel.addVisitor();
               },
-              icon: Icon(Icons.add),
-              label: Text('Add Visitor'),
+             
+              label: Text('Add Visitor',style: TextStyle(color: Colors.white),),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
+                backgroundColor: Colors.black
               ),
             ),
           ),

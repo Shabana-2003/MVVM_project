@@ -1,4 +1,4 @@
-import 'package:bw_one/view_model/visitor_management_page.dart';
+import 'package:bw_one/view/visitor_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/user_view_model.dart';
@@ -6,16 +6,19 @@ import 'payment_page.dart';
 
 
 class UserListPage extends StatelessWidget {
+  const UserListPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        backgroundColor: Colors.black,
+        title: const Center(child: Text('User List',style: TextStyle(color: Colors.white),)),
         actions: [
           IconButton(
-            icon: Icon(Icons.clear),
+            icon:const Icon(Icons.clear,color: Colors.white,),
             onPressed: () {
               userViewModel.clearData();
             },
@@ -28,7 +31,8 @@ class UserListPage extends StatelessWidget {
                 onPressed: () {
                   userViewModel.fetchUsers();
                 },
-                child: Text('Load Users'),
+                child:const Text('Load Users'),
+              
               ),
             )
           : ListView.builder(
@@ -36,7 +40,7 @@ class UserListPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final user = userViewModel.users[index];
                 return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  margin:const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundImage: NetworkImage(user['picture']['thumbnail']),
@@ -44,7 +48,7 @@ class UserListPage extends StatelessWidget {
                     title: Text('${user['name']['first']} ${user['name']['last']}'),
                     subtitle: Text(user['email']),
                     trailing: IconButton(
-                      icon: Icon(Icons.arrow_forward),
+                      icon:const Icon(Icons.arrow_forward),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -63,13 +67,13 @@ class UserListPage extends StatelessWidget {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to VisitorManagementPage
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => VisitorManagementPage()),
           );
         },
-        child: Icon(Icons.person_add),
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        child:const Icon(Icons.person_add,color: Colors.white,)
       ),
     );
   }
@@ -83,7 +87,7 @@ class UserListPage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Update Payment Details'),
+          title:const Text('Update Payment Details'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -101,7 +105,7 @@ class UserListPage extends StatelessWidget {
               ),
               TextField(
                 controller: amountController,
-                decoration: InputDecoration(
+                decoration:const InputDecoration(
                   labelText: 'Payment Amount',
                 ),
                 keyboardType: TextInputType.number,
@@ -116,13 +120,14 @@ class UserListPage extends StatelessWidget {
                     user, double.tryParse(amountController.text) ?? 2500.0);
                 Navigator.pop(context);
               },
-              child: Text('Save'),
+              child:const Text('Save',style: TextStyle(color: Colors.black)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child:const Text('Cancel',style: TextStyle(color: Colors.black),),
+             
             ),
           ],
         );
