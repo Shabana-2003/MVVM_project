@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../view_model/user_view_model.dart';
 
 class VisitorManagementPage extends StatelessWidget {
+  const VisitorManagementPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
@@ -10,13 +12,16 @@ class VisitorManagementPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Visitor Management',style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Visitor Management',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Column(
         children: [
           Expanded(
             child: userViewModel.visitors.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text('No visitors added yet.'),
                   )
                 : ListView.builder(
@@ -24,11 +29,15 @@ class VisitorManagementPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final visitor = userViewModel.visitors[index];
                       return Card(
-                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundColor: Colors.black,
-                            child: Text(visitor['name'][8],style: TextStyle(color: Colors.white),),
+                            child: Text(
+                              visitor['name'][8],
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           ),
                           title: Text(visitor['name']),
                           subtitle: Column(
@@ -37,10 +46,13 @@ class VisitorManagementPage extends StatelessWidget {
                               DropdownButton<String>(
                                 value: visitor['paymentMethod'],
                                 onChanged: (value) {
-                                  userViewModel.updateVisitorPaymentMethod(index, value!);
+                                  userViewModel.updateVisitorPaymentMethod(
+                                      index, value!);
                                 },
-                                items: ['Cash', 'UPI']
-                                    .map<DropdownMenuItem<String>>((String value) {
+                                items: [
+                                  'Cash',
+                                  'UPI'
+                                ].map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -48,13 +60,15 @@ class VisitorManagementPage extends StatelessWidget {
                                 }).toList(),
                               ),
                               TextField(
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Payment Amount',
                                 ),
                                 keyboardType: TextInputType.number,
                                 onChanged: (value) {
-                                  double amount = double.tryParse(value) ?? 1000.0;
-                                  userViewModel.updateVisitorPaymentAmount(index, amount);
+                                  double amount =
+                                      double.tryParse(value) ?? 1000.0;
+                                  userViewModel.updateVisitorPaymentAmount(
+                                      index, amount);
                                 },
                                 controller: TextEditingController(
                                   text: visitor['paymentAmount'].toString(),
@@ -73,12 +87,13 @@ class VisitorManagementPage extends StatelessWidget {
               onPressed: () {
                 userViewModel.addVisitor();
               },
-             
-              label: Text('Add Visitor',style: TextStyle(color: Colors.white),),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
-                backgroundColor: Colors.black
+              label: const Text(
+                'Add Visitor',
+                style: TextStyle(color: Colors.white),
               ),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.black),
             ),
           ),
         ],

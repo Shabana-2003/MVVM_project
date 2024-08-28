@@ -11,10 +11,11 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
+  
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => UserViewModel(),
-      child: MaterialApp(
+      child: const MaterialApp(
         title: 'User Payment App',
         home: UserListPage(),
         debugShowCheckedModeBanner: false,
