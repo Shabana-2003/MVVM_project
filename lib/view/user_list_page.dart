@@ -139,15 +139,44 @@ class UserListPage extends StatelessWidget {
             ],
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                userStore.updatePaymentMethod(user, selectedMethod);
-                userStore.updatePaymentAmount(
-                    user, double.tryParse(amountController.text) ?? 2500.0);
-                Navigator.pop(context);
-              },
-              child: const Text('Save', style: TextStyle(color: Colors.black)),
-            ),
+            // TextButton(
+            //   onPressed: () {
+            //     userStore.updatePaymentMethod(user, selectedMethod);
+            //     userStore.updatePaymentAmount(
+            //         user, double.tryParse(amountController.text) ?? 2500.0);
+            //     Navigator.pop(context);
+            //   },
+            //   child: const Text('Save', style: TextStyle(color: Colors.black)),
+            // ),
+//             TextButton(
+//   onPressed: () {
+   
+//     final newAmount = double.tryParse(amountController.text) ?? user.paymentAmount;
+//     userStore.updatePaymentAmount(user, newAmount);
+//      userStore.updatePaymentMethod(user, selectedMethod);
+//     Navigator.pop(context);
+//   },
+//   child: const Text('Save', style: TextStyle(color: Colors.black)),
+// ),
+TextButton(
+  onPressed: () {
+
+    final newAmount = double.tryParse(amountController.text) ?? user.paymentAmount;
+    userStore.updatePaymentAmount(user, newAmount);
+    Navigator.pop(context);
+  },
+  child: const Text('Save amount', style: TextStyle(color: Colors.black)),
+),
+TextButton(
+  onPressed: () {
+    userStore.updatePaymentMethod(user, selectedMethod);
+    
+    Navigator.pop(context);
+  },
+  child: const Text('Save method', style: TextStyle(color: Colors.black)),
+),
+
+
             TextButton(
               onPressed: () {
                 Navigator.pop(context);

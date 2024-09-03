@@ -36,7 +36,8 @@ class VisitorManagementPage extends StatelessWidget {
                                 horizontal: 10, vertical: 5),
                             child: ListTile(
                               title: Text(visitor.name),
-                              subtitle: Text('Method: ${visitor.paymentMethod}'),
+                              subtitle: Text(
+                                  'Method: ${visitor.paymentMethod}\nAmount: ${visitor.paymentAmount.toStringAsFixed(2)}'), // Displaying both payment method and amount
                               trailing: IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
@@ -101,6 +102,7 @@ class VisitorManagementPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
+                // Update payment method and amount
                 userStore.updateVisitorPaymentMethod(index, selectedMethod);
                 userStore.updateVisitorPaymentAmount(
                     index, double.tryParse(amountController.text) ?? 1000.0);

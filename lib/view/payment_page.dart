@@ -107,12 +107,14 @@ class PaymentPage extends StatelessWidget {
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: NetworkImage(user.picture['large'] ?? ''),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.green, width: 4),
-                      ),
-                    ),
+                    child: user.isUpdated
+                        ? Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.green, width: 4),
+                            ),
+                          )
+                        : null, // Only add green circle if user.isUpdated is true
                   ),
                   const SizedBox(height: 20),
                   Text(
