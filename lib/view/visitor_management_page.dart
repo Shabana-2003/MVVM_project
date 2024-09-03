@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
-import '../view_model/user_view_model.dart';
+import '../view_model/user_store.dart';
 
 class VisitorManagementPage extends StatelessWidget {
   const VisitorManagementPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context);
+    final userStore = Provider.of<UserStore>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -17,87 +18,108 @@ class VisitorManagementPage extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: userViewModel.visitors.isEmpty
-                ? const Center(
-                    child: Text('No visitors added yet.'),
-                  )
-                : ListView.builder(
-                    itemCount: userViewModel.visitors.length,
-                    itemBuilder: (context, index) {
-                      final visitor = userViewModel.visitors[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.black,
-                            child: Text(
-                              visitor['name'][8],
-                              style: const TextStyle(color: Colors.white),
+      body: Observer(
+        builder: (_) {
+          return Column(
+            children: [
+              Expanded(
+                child: userStore.visitors.isEmpty
+                    ? const Center(
+                        child: Text('No visitors added yet.'),
+                      )
+                    : ListView.builder(
+                        itemCount: userStore.visitors.length,
+                        itemBuilder: (context, index) {
+                          final visitor = userStore.visitors[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: ListTile(
+                              title: Text(visitor.name),
+                              subtitle: Text('Method: ${visitor.paymentMethod}'),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  _showVisitorPaymentDialog(
+                                      context, userStore, index);
+                                },
+                              ),
                             ),
-                          ),
-                          title: Text(visitor['name']),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              DropdownButton<String>(
-                                value: visitor['paymentMethod'],
-                                onChanged: (value) {
-                                  userViewModel.updateVisitorPaymentMethod(
-                                      index, value!);
-                                },
-                                items: [
-                                  'Cash',
-                                  'UPI'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                              TextField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Payment Amount',
-                                ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  double amount =
-                                      double.tryParse(value) ?? 1000.0;
-                                  userViewModel.updateVisitorPaymentAmount(
-                                      index, amount);
-                                },
-                                controller: TextEditingController(
-                                  text: visitor['paymentAmount'].toString(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                userViewModel.addVisitor();
-              },
-              label: const Text(
-                'Add Visitor',
-                style: TextStyle(color: Colors.white),
+                          );
+                        },
+                      ),
               ),
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.black),
-            ),
-          ),
-        ],
+              ElevatedButton(
+                onPressed: () {
+                  userStore.addVisitor();
+                },
+                child: const Text('Add Visitor'),
+              ),
+            ],
+          );
+        },
       ),
+    );
+  }
+
+  void _showVisitorPaymentDialog(
+      BuildContext context, UserStore userStore, int index) {
+    final visitor = userStore.visitors[index];
+    String selectedMethod = visitor.paymentMethod;
+    TextEditingController amountController = TextEditingController(
+        text: visitor.paymentAmount.toString());
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Update Visitor Payment Details'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButton<String>(
+                value: selectedMethod,
+                onChanged: (value) {
+                  selectedMethod = value!;
+                },
+                items: ['Cash', 'UPI'].map((method) {
+                  return DropdownMenuItem(
+                    value: method,
+                    child: Text(method),
+                  );
+                }).toList(),
+              ),
+              TextField(
+                controller: amountController,
+                decoration: const InputDecoration(
+                  labelText: 'Payment Amount',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                userStore.updateVisitorPaymentMethod(index, selectedMethod);
+                userStore.updateVisitorPaymentAmount(
+                    index, double.tryParse(amountController.text) ?? 1000.0);
+                Navigator.pop(context);
+              },
+              child: const Text('Save', style: TextStyle(color: Colors.black)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

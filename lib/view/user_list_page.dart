@@ -1,15 +1,17 @@
-import 'package:bw_one/view/visitor_management_page.dart';
+import 'package:bw_one/model/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
-import '../view_model/user_view_model.dart';
+import '../view_model/user_store.dart';
 import 'payment_page.dart';
+import 'visitor_management_page.dart';
 
 class UserListPage extends StatelessWidget {
   const UserListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context);
+    final userStore = Provider.of<UserStore>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,54 +28,66 @@ class UserListPage extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              userViewModel.clearData();
+              userStore.clearData();
             },
           ),
         ],
       ),
-      body: userViewModel.users.isEmpty
-          ? Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  userViewModel.fetchUsers();
-                },
-                child: const Text('Load Users'),
-              ),
-            )
-          : ListView.builder(
-              itemCount: userViewModel.users.length,
-              itemBuilder: (context, index) {
-                final user = userViewModel.users[index];
-                return Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      backgroundImage:
-                          NetworkImage(user['picture']['thumbnail']),
-                    ),
-                    title: Text(
-                        '${user['name']['first']} ${user['name']['last']}'),
-                    subtitle: Text(user['email']),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PaymentPage(user: user),
-                          ),
-                        );
-                      },
-                    ),
-                    onTap: () {
-                      _showPaymentDialog(context, userViewModel, user);
+      body: Observer(
+        builder: (_) {
+          return userStore.users.isEmpty
+              ? Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      userStore.fetchUsers();
                     },
+                    child: const Text('Load Users'),
                   ),
+                )
+              : ListView.builder(
+                  itemCount: userStore.users.length,
+                  itemBuilder: (context, index) {
+                    final user = userStore.users[index];
+                    return Card(
+                      margin:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      child: ListTile(
+  leading: CircleAvatar(
+    backgroundColor: Colors.grey,
+    backgroundImage: NetworkImage(user.picture['thumbnail'] ?? ''), // Use thumbnail URL
+  ),
+  title: Text('${user.name}'),
+  
+  trailing: IconButton(
+    icon: const Icon(Icons.arrow_forward),
+    //onPressed: () {
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => PaymentPage(user: user),
+      //   ),
+      // );
+      onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PaymentPage(userId: user.id),
+    ),
+  );
+}
+
+   // },
+  ),
+  onTap: () {
+    _showPaymentDialog(context, userStore, user);
+  },
+                      )
+
+                    );
+                  },
                 );
-              },
-            ),
+        },
+      ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
@@ -90,10 +104,10 @@ class UserListPage extends StatelessWidget {
   }
 
   void _showPaymentDialog(
-      BuildContext context, UserViewModel userViewModel, dynamic user) {
-    String selectedMethod = userViewModel.getPaymentMethod(user);
+      BuildContext context, UserStore userStore, User user) {
+    String selectedMethod = user.paymentMethod;
     TextEditingController amountController = TextEditingController(
-        text: userViewModel.getPaymentAmount(user).toString());
+        text: user.paymentAmount.toString());
 
     showDialog(
       context: context,
@@ -127,8 +141,8 @@ class UserListPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                userViewModel.updatePaymentMethod(user, selectedMethod);
-                userViewModel.updatePaymentAmount(
+                userStore.updatePaymentMethod(user, selectedMethod);
+                userStore.updatePaymentAmount(
                     user, double.tryParse(amountController.text) ?? 2500.0);
                 Navigator.pop(context);
               },
