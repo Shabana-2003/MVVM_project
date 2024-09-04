@@ -1,4 +1,3 @@
-// In your visitor_model.dart
 class Visitor {
   final String name;
   final String paymentMethod;
